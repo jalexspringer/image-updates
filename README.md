@@ -2,6 +2,7 @@
 Command line tool to create visualizations and record update histories for docker hub images. Uses anchore navigator for update data. 
 
 See results.png for example output.
+![chart of updates example](https://github.com/jalexspringer/image-updates/raw/master/results.png)
 
 ## Installation
 git clone https://github.com/jalexspringer/image-updates.git
