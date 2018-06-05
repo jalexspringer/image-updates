@@ -3,6 +3,7 @@
 from datetime import datetime
 import sys
 
+from prettyprinter import pprint
 import click
 import requests
 import matplotlib
@@ -48,7 +49,8 @@ def get_update_dictionary(repos, years):
 @click.argument('repos', nargs=-1)
 @click.option('--years', '-y', default=1, help='Number of years (from this one) to look back.')
 @click.option('--output', '-o', default='results.png', help='Output file for the plot.')
-def plot_updates(repos, years, output):
+@click.option('--human_readable', '-h', is_flag=True, help='Easy to read datetimes?')
+def plot_updates(repos, years, output, human_readable):
     """This script returns the update frequency of Docker Hub images and generates a plot with update dates.
        Pass any number of of images/repos - accepts the following formats: library/ubuntu:latest, ubuntu:latest, ubuntu'
     """
@@ -73,6 +75,13 @@ def plot_updates(repos, years, output):
             reps.append(['library', repo, 'latest'])
     updates = get_update_dictionary(reps, years)
     for k,v in updates.items():
+        print(k, 'update times:')
+        if human_readable:
+            for d in v:
+                print(d.strftime("%H:%M %d %b %Y"))
+        else:
+            for d in v:
+                print(d)
         l = []
         for i in v:
             l.append(k.split(':')[0])
@@ -83,4 +92,3 @@ def plot_updates(repos, years, output):
     ax.xaxis.set_major_formatter(xtick_formatter)
     plt.tight_layout()
     plt.savefig(output)
-    

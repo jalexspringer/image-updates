@@ -14,5 +14,5 @@ image-update -y 1 -o plot.png ubuntu centos:7 anchore/anchore-engine library/pyt
 
 ## TODOS
 - Adjust figure height of output
-- Add help messages to click options and parameters
+- Make 'human readable' more... readable. Or get rid of it.
 
