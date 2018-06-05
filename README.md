@@ -13,6 +13,7 @@ image-update --help
 image-update -y 1 -o plot.png ubuntu centos:7 anchore/anchore-engine library/python:alpine
 
 ## TODOS
-- Adjust figure height of output
+- Adjust figure height of output, make output prettier.
 - Make 'human readable' more... readable. Or get rid of it.
+- Store output somewhere (JSON?) for later use and further analytics?
 
