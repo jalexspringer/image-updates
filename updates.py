@@ -167,6 +167,6 @@ def plot_updates(repos, years, output, human_readable, json_out):
     # Fiddle with the y axis
     ax.set_ylim(.75, counter)
     plt.yticks(y, labels)
-    fig.set_figheight(.72 * len(labels))
+    fig.set_figheight(years * 12 - 2.5)
     plt.tight_layout()
     plt.savefig(output)
