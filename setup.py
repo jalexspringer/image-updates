@@ -13,6 +13,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        image-update=updates:plot_updates
+        image-updates=updates:plot_updates
     ''',
 )
