@@ -138,13 +138,11 @@ def plot_updates(repos, years, output, human_readable, json_out):
     style.use('ggplot')
     fig = plt.figure(1)
     ax = fig.add_subplot(1,1,1)
-    counter, max_age, labels, y = 1, 0, [], []
+    counter, labels, y = 1, [], []
     for k,v in updates.items():
-        this_age = 0
         y.append(counter)
         print(k, 'update times:')
         for d in v:
-            this_age += 1
             print(d)
         l = []
         for i in v:
@@ -152,8 +150,6 @@ def plot_updates(repos, years, output, human_readable, json_out):
         labels.append(k.split('/')[1])
         plt.plot(v,l, ls='None', marker='s', markeredgecolor='black')
         counter += .25
-        if this_age > max_age:
-            max_age = this_age
         
     # Fiddle with the x axis
     #set ticks every week
@@ -162,11 +158,15 @@ def plot_updates(repos, years, output, human_readable, json_out):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b \'%y'))
     # Lean back
     ax.tick_params(axis='x', rotation=40)
-    fig.set_figwidth(max_age * 1.2)
+    fig.set_figwidth(7)
 
     # Fiddle with the y axis
     ax.set_ylim(.75, counter)
     plt.yticks(y, labels)
-    fig.set_figheight(years * 12 - 2.5)
+    height = .75 * len(labels)
+    if height < 1:
+        fig.set_figheight(1)
+    else:
+        fig.set_figheight(height)
     plt.tight_layout()
     plt.savefig(output)
