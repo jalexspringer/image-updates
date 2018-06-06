@@ -158,7 +158,7 @@ def plot_updates(repos, years, output, human_readable, json_out):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b \'%y'))
     # Lean back
     ax.tick_params(axis='x', rotation=40)
-    fig.set_figwidth(7)
+    fig.set_figwidth(9)
 
     # Fiddle with the y axis
     ax.set_ylim(.75, counter)
