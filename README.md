@@ -2,7 +2,8 @@
 Command line tool to create visualizations and record update histories for docker hub images. Uses anchore navigator for update data. 
 
 Example output.
-![chart of updates example](https://github.com/jalexspringer/image-updates/raw/master/results.png)
+![os updates example](https://github.com/jalexspringer/image-updates/raw/master/os-updates.png)
+![non-os updates example](https://github.com/jalexspringer/image-updates/raw/master/non-os-updates.png)
 
 ```
 $ image-update -y 1 -o plot.png ubuntu     
@@ -32,8 +33,7 @@ image-update --help
 
 image-update -y 1 -o plot.png ubuntu centos:7 anchore/anchore-engine library/python:alpine
 
-## TODOS
-- Adjust figure height of output, make output prettier.
-- Make 'human readable' more... readable. Or get rid of it.
-- Store output somewhere (JSON?) for later use and further analytics?
+## Convenience
+Use blog_update.sh to get a chart from the last 2 years of updates to major OS
+and non-OS packages. Read about further analytics here: [https://anchore.com/blog/look-often-docker-images-updated]
 

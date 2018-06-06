@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
 from datetime import datetime
-import sys
+import json
 
 import click
 import requests
-import matplotlib
+import matplotlib.style as style
 import matplotlib.pyplot as plt
-from matplotlib.dates import AutoDateFormatter, AutoDateLocator
+import matplotlib.dates as mdates
+
+from json.decoder import JSONDecodeError
 
 def req_url(reg, rep, tag, image_id):
     """
@@ -51,8 +53,16 @@ def get_update_dictionary(repos, years):
     """
     updates = {}
     for r in repos:
-        ret = requests.get(req_url(r[0], r[1], r[2], get_id(r[0],r[1],r[2]))).json()
         tag = '{}/{}:{}'.format(r[0],r[1],r[2])
+        try:
+            ret = requests.get(req_url(r[0], r[1], r[2], get_id(r[0],r[1],r[2]))).json()
+        except JSONDecodeError as e:
+            try:
+                print('Ding!')
+                ret = requests.get(req_url(r[0], r[1], r[2], get_id(r[0],r[1],r[2]))).json()
+            except:
+                print('Ding!Ding!')
+                ret = requests.get(req_url(r[0], r[1], r[2], get_id(r[0],r[1],r[2]))).json()
         try:
             most_recent = datetime.fromtimestamp(ret['changelog']['history'][0]['created_at'])
             second_most = datetime.fromtimestamp(ret['changelog']['history'][1]['created_at'])
@@ -60,7 +70,15 @@ def get_update_dictionary(repos, years):
             updates[tag] = [most_recent, second_most]
             try:
                 while updates[tag][-1].year > datetime.now().year - years:
-                    ret = requests.get(req_url(r[0], r[1], r[2], ret['changelog']['history'][1]['image_id'])).json()
+                    try:
+                        ret = requests.get(req_url(r[0], r[1], r[2], ret['changelog']['history'][1]['image_id'])).json()
+                    except JSONDecodeError as e:
+                        try:
+                            print('Ding!')
+                            ret = requests.get(req_url(r[0], r[1], r[2], ret['changelog']['history'][1]['image_id'])).json()
+                        except:
+                            print('Ding!Ding!')
+                            ret = requests.get(req_url(r[0], r[1], r[2], ret['changelog']['history'][1]['image_id'])).json()
                     updates[tag].append(datetime.fromtimestamp(ret['changelog']['history'][1]['created_at']))
                 print(tag, 'history loaded')
             except KeyError as e:
@@ -103,29 +121,52 @@ def format_repos(repos):
 @click.option('--years', '-y', default=1, help='Number of years (from this one) to look back.')
 @click.option('--output', '-o', default='results.png', help='Output file for the plot.')
 @click.option('--human_readable', '-h', is_flag=True, help='Easy to read datetimes?')
-def plot_updates(repos, years, output, human_readable):
+@click.option('--json_out', '-j', default='None', help='Export to a JSON file. Pass file name.')
+def plot_updates(repos, years, output, human_readable, json_out):
     """This script returns the update frequency of Docker Hub images and generates a plot with update dates.
        Pass any number of of images/repos - accepts the following formats: library/ubuntu:latest, ubuntu:latest, ubuntu'
     """
-    matplotlib.style.use('ggplot')
-    fig, ax = plt.subplots(1)
     reps = format_repos(repos)
     updates = get_update_dictionary(reps, years)
+    
+    # Output the json file on demand
+    if json_out != 'None':
+        with open(json_out, 'w') as outfile:
+            json.dump(updates, outfile, indent=4, sort_keys=True, default=str)
+            
+    # Pixels and plots for fun and profit!
+    style.use('ggplot')
+    fig = plt.figure(1)
+    ax = fig.add_subplot(1,1,1)
+    counter, max_age, labels, y = 1, 0, [], []
     for k,v in updates.items():
+        this_age = 0
+        y.append(counter)
         print(k, 'update times:')
-        if human_readable:
-            for d in v:
-                print(d.strftime("%H:%M %d %b %Y"))
-        else:
-            for d in v:
-                print(d)
+        for d in v:
+            this_age += 1
+            print(d)
         l = []
         for i in v:
-            l.append(k.split(':')[0])
-        ax.plot(v,l, ls='None', marker='s', markeredgecolor='black')
-    xtick_locator = AutoDateLocator()
-    xtick_formatter = AutoDateFormatter(xtick_locator)
-    ax.xaxis.set_major_locator(xtick_locator)
-    ax.xaxis.set_major_formatter(xtick_formatter)
+            l.append(counter)
+        labels.append(k.split('/')[1])
+        plt.plot(v,l, ls='None', marker='s', markeredgecolor='black')
+        counter += .25
+        if this_age > max_age:
+            max_age = this_age
+        
+    # Fiddle with the x axis
+    #set ticks every week
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    #set major ticks format
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b \'%y'))
+    # Lean back
+    ax.tick_params(axis='x', rotation=40)
+    fig.set_figwidth(max_age * 1.2)
+
+    # Fiddle with the y axis
+    ax.set_ylim(.75, counter)
+    plt.yticks(y, labels)
+    fig.set_figheight(.72 * len(labels))
     plt.tight_layout()
     plt.savefig(output)
