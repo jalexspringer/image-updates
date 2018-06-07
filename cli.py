@@ -15,13 +15,14 @@ from utils import *
 @click.option('--output', '-o', default='results.png', help='Output file for the plot.')
 @click.option('--json_out', '-j', default='None', help='Export to a JSON file. Pass file name.')
 @click.option('--verbose', '-v', is_flag=True, help='List datetimes in your terminal?')
-def create_plot_file(repos, years, style, output, json_out, verbose):
+@click.option('--quiet', '-q', is_flag=True, help='No working updates in terminal output at all. You\'ll still see errors.')
+def create_plot_file(repos, years, style, output, json_out, verbose, quiet):
     """This script returns the update frequency of Docker Hub images and generates a plot with update dates.
        Pass any number of of images/repos - accepts the following formats: library/ubuntu:latest, ubuntu:latest, ubuntu'
     """
     # TODO Check for connection - handle requests.exceptions.ConnectionError
     reps = format_repos(repos)
-    updates = get_update_dictionary(reps, years)
+    updates = get_update_dictionary(reps, years, quiet)
 
     # Output the json file on demand
     if json_out != 'None':

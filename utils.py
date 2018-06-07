@@ -65,7 +65,8 @@ def get_update_dictionary(repos, years):
         try:
             most_recent = datetime.fromtimestamp(ret['changelog']['history'][0]['created_at'])
             second_most = datetime.fromtimestamp(ret['changelog']['history'][1]['created_at'])
-            print('Found', tag, '- loading update history.')
+            if not quiet:
+                print('Found', tag, '- loading update history')
             updates[tag] = [most_recent, second_most]
             try:
                 while updates[tag][-1].year > datetime.now().year - years:
@@ -79,7 +80,8 @@ def get_update_dictionary(repos, years):
                             print('Ding!Ding!')
                             ret = requests.get(req_url(r[0], r[1], r[2], ret['changelog']['history'][1]['image_id'])).json()
                     updates[tag].append(datetime.fromtimestamp(ret['changelog']['history'][1]['created_at']))
-                print(tag, 'history loaded')
+                if not quiet:
+                    print(tag, 'history loaded')
             except KeyError as e:
                 print('Image history is not that long!')
                 continue
