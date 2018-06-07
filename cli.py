@@ -18,7 +18,7 @@ from utils import *
 @click.option('--output', '-o', default='results.png', help='Output file for the plot.')
 @click.option('--human_readable', '-h', is_flag=True, help='Easy to read datetimes?')
 @click.option('--json_out', '-j', default='None', help='Export to a JSON file. Pass file name.')
-def plot_updates(repos, years, output, human_readable, json_out):
+def create_plot_file(repos, years, output, human_readable, json_out):
     """This script returns the update frequency of Docker Hub images and generates a plot with update dates.
        Pass any number of of images/repos - accepts the following formats: library/ubuntu:latest, ubuntu:latest, ubuntu'
     """
