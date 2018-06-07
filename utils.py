@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 
 from datetime import datetime
+
 import requests
+import matplotlib.pyplot as plt
+import matplotlib.style as style
+import matplotlib.dates as mdates
+
+from json.decoder import JSONDecodeError
+
 
 def req_url(reg, rep, tag, image_id):
     """
@@ -107,3 +114,34 @@ def format_repos(repos):
         else:
             reps.append(['library', repo, 'latest'])
     return reps
+
+def plotter(updates, style, fig, ax):
+    # Pixels and plots for fun and profit!
+    style.use(style)
+    counter, labels, y = 1, [], []
+    for k,v in updates.items():
+        y.append(counter)
+        l = []
+        for i in v:
+            l.append(counter)
+        labels.append(k.split('/')[1])
+        plt.plot(v,l, ls='None', marker='s', markeredgecolor='black')
+        counter += .25
+        
+    # Fiddle with the x axis
+    #set ticks every week
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    #set major ticks format
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b \'%y'))
+    # Lean back
+    ax.tick_params(axis='x', rotation=40)
+    fig.set_figwidth(9)
+
+    # Fiddle with the y axis
+    ax.set_ylim(.75, counter)
+    plt.yticks(y, labels)
+    height = .75 * len(labels)
+    if height < 1:
+        fig.set_figheight(1)
+    else:
+        fig.set_figheight(height)

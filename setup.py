@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(
-    name="image-updates",
+    name="image_updates",
     version='0.1.2',
     py_modules=['cli','utils'],
     install_requires=[
