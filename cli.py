@@ -3,7 +3,6 @@
 import json
 
 import click
-import matplotlib.pyplot as plt
 
 from utils import *
 
@@ -36,8 +35,4 @@ def create_plot_file(repos, years, style, output, json_out, verbose, quiet):
             for d in v:
                 print(d)
 
-    fig = plt.figure(1)
-    ax = fig.add_subplot(1,1,1)
-    plotter(updates, style, verbose, fig, ax)
-    plt.tight_layout()
-    plt.savefig(output)
+    plotter(updates, style, output)

@@ -3,9 +3,9 @@
 from datetime import datetime
 
 import requests
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.style as style
-import matplotlib.dates as mdates
 
 from json.decoder import JSONDecodeError
 
@@ -41,7 +41,7 @@ def get_id(reg,rep,tag):
             return r['image_id']
     
     
-def get_update_dictionary(repos, years):
+def get_update_dictionary(repos, years, quiet):
     """
     Gets all update datetimes for images in a list of repos.
     
@@ -117,9 +117,11 @@ def format_repos(repos):
             reps.append(['library', repo, 'latest'])
     return reps
 
-def plotter(updates, style, fig, ax):
+def plotter(updates, styl, output):
     # Pixels and plots for fun and profit!
-    style.use(style)
+    style.use(styl)
+    fig = plt.figure(1)
+    ax = fig.add_subplot(1,1,1)
     counter, labels, y = 1, [], []
     for k,v in updates.items():
         y.append(counter)
@@ -147,3 +149,7 @@ def plotter(updates, style, fig, ax):
         fig.set_figheight(1)
     else:
         fig.set_figheight(height)
+
+    plt.tight_layout()
+    if output:
+        plt.savefig(output)
