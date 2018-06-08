@@ -157,4 +157,7 @@ def plotter(updates, styl, output, height, width):
 
     plt.tight_layout()
     if output:
+        if '.' not in output:
+            output = '{}.png'.format(output)
         plt.savefig(output)
+        print('Plot saved as', output)

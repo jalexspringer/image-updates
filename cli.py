@@ -18,7 +18,16 @@ from utils import *
 @click.option('--load_json', '-l', default='None', help='JSON updates dictionary to import from.')
 @click.option('--verbose', '-v', is_flag=True, help='List datetimes in your terminal?')
 @click.option('--quiet', '-q', is_flag=True, help='No working updates in terminal output at all. You\'ll still see errors.')
-def create_plot_file(repos, years, style, height, width, output, json_out, load_json, verbose, quiet):
+def create_plot_file(repos,
+                     years,
+                     style,
+                     height,
+                     width,
+                     output,
+                     json_out,
+                     load_json,
+                     verbose,
+                     quiet):
     """This script returns the update frequency of Docker Hub images and generates a plot with update dates.
        Pass any number of of images/repos - accepts the following formats: library/ubuntu:latest, ubuntu:latest, ubuntu'
     """
@@ -33,6 +42,7 @@ def create_plot_file(repos, years, style, height, width, output, json_out, load_
                 print("Loaded the following tag info:")
                 for k,v in updates.items():
                     updates[k] = read_replace_datetime(v)
+                    print(k)
     else:
         # Get updates from Anchore DB
         updates = get_update_dictionary(reps, years, quiet)
