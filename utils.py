@@ -10,6 +10,10 @@ import matplotlib.style as style
 from json.decoder import JSONDecodeError
 
 
+def read_replace_datetime(dates):
+    out = [datetime.strptime(x, '%Y-%m-%d %H:%M:%S') for x in dates]
+    return out
+
 def req_url(reg, rep, tag, image_id):
     """
     Format the url to call Anchore Navigator (anchore.io) for the changelog information of an image
@@ -117,7 +121,7 @@ def format_repos(repos):
             reps.append(['library', repo, 'latest'])
     return reps
 
-def plotter(updates, styl, output):
+def plotter(updates, styl, output, height, width):
     # Pixels and plots for fun and profit!
     style.use(styl)
     fig = plt.figure(1)
@@ -139,14 +143,15 @@ def plotter(updates, styl, output):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b \'%y'))
     # Lean back
     ax.tick_params(axis='x', rotation=40)
-    fig.set_figwidth(9)
+    fig.set_figwidth(width)
 
     # Fiddle with the y axis
     ax.set_ylim(.75, counter)
     plt.yticks(y, labels)
-    height = .75 * len(labels)
-    if height < 1:
-        fig.set_figheight(1)
+    if height < 0:
+        height = .75 * len(labels)
+    if height <= 1:
+        fig.set_figheight(1.25)
     else:
         fig.set_figheight(height)
 
